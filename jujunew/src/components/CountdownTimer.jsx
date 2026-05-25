@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const birthDate = new Date("2002-05-04T00:00:00")
+const birthDate = new Date("2002-05-28T00:00:00")
 
 // ── Accurate age calculator ──────────────────────────────────────
 function calculateExactAge(birthDate) {
@@ -193,7 +193,7 @@ function CountdownTimer() {
   //   Phase 1 — COUNTDOWN:    counting down to the next birthday
   //   Phase 2 — CELEBRATION:  showing live age for 6 months
   //
-  // Timeline each year (birthday = May 4):
+  // Timeline each year (birthday = May 28):
   //   [Jan 1 ··· May 4)  → countdown to May 4
   //   [May 4 ··· Nov 4)  → celebration (6 months)
   //   [Nov 4 ··· Dec 31] → countdown to next May 4
@@ -436,7 +436,7 @@ function CountdownTimer() {
                 zIndex: 1,
               }}
             >
-              🎉 Congratulations Arju 🎉
+              🎉 Congratulations Neha 🎉
             </motion.h2>
 
             {/* ── Age cards ─────────────────────────────── */}

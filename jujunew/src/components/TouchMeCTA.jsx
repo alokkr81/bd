@@ -467,7 +467,7 @@ function TouchMeCTA() {
     })
   }, [])
 
-  /* ── Start HBD ARJ (with bg fade-out + HBD fade-in) ── */
+  /* ── Start HBD NEHA (with bg fade-out + HBD fade-in) ── */
   const startHbd = useCallback(() => {
     if (isHbdPlayingRef.current) return
     isHbdPlayingRef.current = true
@@ -482,7 +482,7 @@ function TouchMeCTA() {
       })
     }
 
-    // 2. Start HBD ARJ with fade-in
+    // 2. Start HBD NEHA with fade-in
     const hbd = hbdAudioRef.current
     if (hbd) {
       // Clear any existing fade
@@ -539,7 +539,7 @@ function TouchMeCTA() {
       window.dispatchEvent(new CustomEvent('timeline:showFiller'))
     }
 
-    // 🎈 Balloon click (step 1): fade out bg, fade in HBD ARJ
+    // 🎈 Balloon click (step 1): fade out bg, fade in HBD NEHA
     if (step === 1) {
       startHbd()
     }

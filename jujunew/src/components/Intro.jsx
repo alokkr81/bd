@@ -102,7 +102,7 @@ function Intro({ onComplete }) {
             textAlign: 'center',
           }}
         >
-          04 May — Arju's Special Day
+          28 May — Neha's Special Day
         </motion.h1>
       </div>
     </motion.section>

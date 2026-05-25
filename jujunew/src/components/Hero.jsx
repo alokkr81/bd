@@ -62,7 +62,7 @@ export default function Hero() {
           }}
         >
           <span className="hero-title-line">Happy Birthday</span>{' '}
-          <span className="hero-title-name">Arju</span>
+          <span className="hero-title-name">Neha</span>
         </motion.h1>
       </div>
 

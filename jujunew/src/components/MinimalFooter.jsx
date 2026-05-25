@@ -361,7 +361,7 @@ export default function MinimalFooter() {
                 transition: 'text-shadow 0.3s ease',
               }}
             >
-              Adarsh Ranjan
+              Alok kumar
             </span>
           </motion.p>
 
@@ -389,10 +389,10 @@ export default function MinimalFooter() {
             <span>
               Contact:{' '}
               <a
-                href="mailto:adarshsingh3553@gmail.com"
+                href="mailto:alokkr813211@gmail.com"
                 style={{ color: '#dbeafe', textDecoration: 'none' }}
               >
-                adarshsingh3553@gmail.com
+                alokkr813211@gmail.com
               </a>
             </span>
             <span
@@ -401,7 +401,7 @@ export default function MinimalFooter() {
             >
               |
             </span>
-            <span>+91 90769 02080</span>
+            <span>+91 7462015353</span>
           </motion.p>
 
           {/* ── Line 3: Copyright + Privacy Policy ── */}
@@ -426,7 +426,7 @@ export default function MinimalFooter() {
               overflowWrap: 'break-word',
             }}
           >
-            © 2026 Adarsh Ranjan • All Rights Reserved
+            © 2026 Alok kumar • All Rights Reserved
             <span style={{ opacity: 0.5, margin: '0 8px' }}>|</span>
             <span
               className="footer-privacy-link"
