@@ -23,8 +23,10 @@ const Questionnaire = lazy(() => import('./components/Questionnaire'))
 const TouchMeCTA = lazy(() => import('./components/TouchMeCTA'))
 const MinimalFooter = lazy(() => import('./components/MinimalFooter'))
 const RomanticStory = lazy(() => import('./components/RomanticStory'))
+const CinematicPreloader = lazy(() => import('./components/CinematicPreloader'))
 
 function App() {
+  const [showPreloader, setShowPreloader] = useState(true)
   const [showIntro, setShowIntro] = useState(true)
   const [isPasswordUnlocked, setIsPasswordUnlocked] = useState(false)
   const [storyUnlocked, setStoryUnlocked] = useState(false)
@@ -240,7 +242,7 @@ function App() {
         <BackgroundGradient />
         <ParticlesBackground />
       </Suspense>
-      <AudioPlayer isUnlocked={isPasswordUnlocked} showIntro={showIntro} />
+      <AudioPlayer isUnlocked={isPasswordUnlocked} showPreloader={showPreloader} />
 
       <AnimatePresence mode="wait">
         {!isPasswordUnlocked && (
@@ -249,7 +251,15 @@ function App() {
       </AnimatePresence>
 
       <AnimatePresence mode="wait">
-        {showIntro && isPasswordUnlocked && (
+        {showPreloader && isPasswordUnlocked && (
+          <Suspense fallback={null}>
+            <CinematicPreloader key="preloader" onComplete={() => setShowPreloader(false)} />
+          </Suspense>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {showIntro && isPasswordUnlocked && !showPreloader && (
           <Suspense fallback={null}>
             <Intro key="intro" onComplete={() => setShowIntro(false)} />
           </Suspense>
@@ -257,7 +267,8 @@ function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {!showIntro && isPasswordUnlocked && (
+        {!showIntro && isPasswordUnlocked && !showPreloader && (
+
           <motion.div
             key="content"
             initial={{ opacity: 0 }}
@@ -331,7 +342,7 @@ function App() {
       {/* Footer rendered OUTSIDE motion.div to escape its stacking context.
           This lets the footer's z-index compete at the root level, so it can
           sit between the modal backdrop and modal content layers. */}
-      {!showIntro && isPasswordUnlocked && (
+      {!showIntro && isPasswordUnlocked && !showPreloader && (
         <Suspense fallback={null}>
           <MinimalFooter />
         </Suspense>

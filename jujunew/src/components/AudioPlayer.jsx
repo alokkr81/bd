@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAudio } from '../contexts/AudioContext'
 
-function AudioPlayer({ isUnlocked }) {
+function AudioPlayer({ isUnlocked, showPreloader }) {
   const { audioRef, isMuted } = useAudio()
   const fadeIntervalRef = useRef(null)
 
@@ -33,10 +33,10 @@ function AudioPlayer({ isUnlocked }) {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Handle the play logic directly when the app is unlocked
+  // Handle the play logic directly when the app is unlocked and preloader is done
   useEffect(() => {
-    // Wait until the app is unlocked to play
-    if (isUnlocked && audioRef.current && !isPlaying) {
+    // Wait until the app is unlocked AND the cinematic preloader has finished
+    if (isUnlocked && !showPreloader && audioRef.current && !isPlaying) {
       audioRef.current.play()
         .then(() => {
           setIsPlaying(true)
@@ -67,7 +67,7 @@ function AudioPlayer({ isUnlocked }) {
           // Autoplay blocked until user interaction — expected behavior
         })
     }
-  }, [isUnlocked, isPlaying]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isUnlocked, showPreloader, isPlaying]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync mute state from context to audio element
   useEffect(() => {
