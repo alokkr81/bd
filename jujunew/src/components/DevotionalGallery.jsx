@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 import './DevotionalGallery.css';
 
 const images = [
-    { src: '/ganesh.webp', alt: 'Ganesh' },
-    { src: '/ganeshlord.webp', alt: 'Ganesh Lord' },
-    { src: '/krish.webp', alt: 'Krish' },
-    { src: '/krishna.webp', alt: 'Krishna' },
+    { src: '/ganesh.jpeg', alt: 'Ganesh' },
+    { src: '/ganeshlord.jpeg', alt: 'Ganesh Lord' },
+    { src: '/krish.jpeg', alt: 'Krish' },
+    { src: '/krishna.jpeg', alt: 'Krishna' },
 ];
 
 const MOBILE_BREAKPOINT = 768;

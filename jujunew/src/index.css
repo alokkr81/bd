@@ -551,7 +551,7 @@ a, button, [role="button"], input, textarea, select, label {
 
   /* ── Hero Title: Premium Typography ──────────────────────────
      "Happy Birthday" forced on ONE line (nowrap + clamp).
-     "Arju" always on the next line with a premium gradient.
+     "Neha" always on the next line with a premium gradient.
      No overflow on any screen width ≤ 768px. */
   .hero-title {
     display: flex !important;

@@ -6,23 +6,23 @@ const memories = [
     id: 1,
     title: "First Step",
     description:
-      "The day where we showed trust for first time, and everything changed. You shared Birthday pictures with me.",
-    date: "05/05/2019",
+      " Woh din jab humne pehli baar ek dusre par trust kiya, aur sab kuch badal gaya. Tumne mere saath chatpuja  ke  pictures share ki thi.",
+    date: "05/02/2020",
     image: "1.jpeg",
   },
   {
     id: 2,
     title: "Shared Memories",
     description:
-      "Moments filled with pure joy and laughter from 2018 that still make me happy today.",
-    date: "Cherished Times",
+      "Woh din jab humne pehli baar ek dusre par trust kiya tha, aur uske baad sab kuch badal gaya. Tumne apni birthday pictures mere saath share ki thi, aur us moment ne hamare bond ko aur bhi special bana diya.",
+    date: "birthday Times",
     image: "15.jpeg",
   },
   {
     id: 3,
     title: "Together Through It All",
     description:
-      "Standing by each other through every challenge and celebration, growing stronger.",
+      "Tumhari smile aur simplicity hi tumhe itna special banati hai. Yeh photo hamesha mere dil ke kareeb rahegi.",
     date: "Always There",
     image: "13.jpeg",
   },
@@ -30,24 +30,24 @@ const memories = [
     id: 4,
     title: "Unspoken Bond",
     description:
-      "A connection where there is no fight till now, only a mutual understanding.",
-    date: "Our Connection",
+      "Iss traditional look mein tum aur bhi zyada beautiful lag rahi ho. Tumhari simplicity aur smile har photo ko special bana deti hai.",
+    date: "Our Connection 29/012020",
     image: "5.jpeg",
   },
   {
     id: 5,
     title: "Unexpected Meeting",
     description:
-      "When we made eye contact with each other near Durga temple, where we have not thought for this moment.",
-    date: "02/07/2024",
+      "Woh meri zindagi ki pehli video call thi jo mere liye sirf ek call nahi, balki ek bahut special memory ban gayi. Us waqt shayad humein ehsaas nahi tha ki yeh chhoti si conversation hamare dil ke itne kareeb ho jayegi.",
+    date: "20/02/2020",
     image: "7.jpeg",
   },
   {
     id: 6,
-    title: "First call in 6yrs",
+    title: "First call in 2020",
     description:
-      "On 26th Aug 2024, Janmastmi you called me but i couldn't pick up the call. Nearly after one month 24 Sept we had our first call.",
-    date: "24/09/2024",
+      "31 December 2019, naye saal ki shaam ko tumna meri call receive ki thi, aur wahi se hamari nayi kahani ki shuruaat hui thi.",
+    date: "31/12/2019",
     image: "11.jpeg",
   },
 ]

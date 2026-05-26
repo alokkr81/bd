@@ -22,10 +22,12 @@ const SpecialMessage = lazy(() => import('./components/SpecialMessage'))
 const Questionnaire = lazy(() => import('./components/Questionnaire'))
 const TouchMeCTA = lazy(() => import('./components/TouchMeCTA'))
 const MinimalFooter = lazy(() => import('./components/MinimalFooter'))
+const RomanticStory = lazy(() => import('./components/RomanticStory'))
 
 function App() {
   const [showIntro, setShowIntro] = useState(true)
   const [isPasswordUnlocked, setIsPasswordUnlocked] = useState(false)
+  const [storyUnlocked, setStoryUnlocked] = useState(false)
   const [showAudio, setShowAudio] = useState(false)
   const [isSmallDevice, setIsSmallDevice] = useState(false)
 
@@ -312,7 +314,7 @@ function App() {
                   <MemoryTimeline />
                   <SpecialMessage />
                   <TouchMeCTA />
-                  <Questionnaire onComplete={() => { }} />
+                  <Questionnaire onComplete={() => setStoryUnlocked(true)} />
                 </div>
               </Suspense>
             </div>
@@ -334,6 +336,11 @@ function App() {
           <MinimalFooter />
         </Suspense>
       )}
+
+      {/* Full-screen Romantic Story Overlay */}
+      <Suspense fallback={null}>
+        <RomanticStory isVisible={storyUnlocked} onClose={() => setStoryUnlocked(false)} />
+      </Suspense>
     </AudioProvider>
   )
 }

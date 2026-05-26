@@ -120,7 +120,7 @@ exports.handler = async (event) => {
 
     // ── 5. DB insert ──
     var insertData = {
-      user_id: "arju",
+      user_id: "neha",
       ip_address: ip || "unknown",
       city: geo.city || "unknown",
       region: geo.region || "unknown",

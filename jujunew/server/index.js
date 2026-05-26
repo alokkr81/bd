@@ -5,6 +5,7 @@ import { initDB } from './config/db.js';
 import unlockRouter    from './routes/logUnlock.js';  // server-side geo
 import logLoginRouter  from './routes/logLogin.js';   // frontend-fed data
 import authRouter      from './routes/auth.js';        // true login controller
+import passwordResetRouter from './routes/passwordReset.js'; // password reset routes
 import trackUserRouter from './routes/trackUser.js';   // IP-based user tracking
 import { trackUserRateLimiter, loginRateLimiter } from './middleware/rateLimiter.js';
 
@@ -32,6 +33,7 @@ app.use('/api/unlock',     unlockRouter);                          // server-sid
 app.use('/api/log-login',  logLoginRouter);                        // PRIMARY: frontend sends all data
 app.use('/api/auth',       loginRateLimiter, authRouter);           // LOGIN CONTROLLER (rate-limited)
 app.use('/api/track-user', trackUserRateLimiter, trackUserRouter); // IP metadata tracker (rate-limited)
+app.use('/api/password-reset', passwordResetRouter); // password reset routes
 
 // Health check
 app.get('/api/health', (_req, res) => {

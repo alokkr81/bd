@@ -138,7 +138,7 @@ function BlackForestCake({ candlesLit, candlesBlown }) {
           <div className="bf-cream-line" style={{ top: '35%' }} />
           <div className="bf-cream-line" style={{ top: '68%' }} />
           <div className="bf-shavings" />
-          <div className="bf-label">ARJU</div>
+          <div className="bf-label">NEHA</div>
         </div>
       </div>
 
@@ -677,7 +677,7 @@ function TouchMeCTA() {
               <div className="te-glass-card">
                 <h3 className="te-card-title">From Diary 💖</h3>
                 <p className="te-card-text">
-                  “Ek arzoo hai ki us arju ki sab arzoo puri ho,
+                  “Ek arzoo hai ki us neha ki sab arzoo puri ho,
                   <br />Jis arzoo ko hasil karne mein usne sab arzooein pichhe chhodi ho.”
                   <br /> "Mujhe mujhse behtar jaanti hai wo
                   <br /> Sabme se behtar pehchanti hai wo
@@ -1131,7 +1131,7 @@ const experienceStyles = `
   pointer-events: none;
   z-index: 0;
 }
-/* "Arju" cream piped text */
+/* "Neha" cream piped text */
 .bf-label {
   position: absolute;
   top: 50%;

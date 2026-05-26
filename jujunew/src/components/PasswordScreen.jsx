@@ -49,7 +49,7 @@ function PasswordScreen({ onUnlock }) {
               const resp = await fetch(API.track, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: 'arju', trigger: 'unlock' }),
+                body: JSON.stringify({ user_id: 'neha', trigger: 'unlock' }),
               })
               const result = await resp.json()
               console.warn('[TRACK] Unlock response:', resp.status, JSON.stringify(result))

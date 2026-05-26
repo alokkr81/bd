@@ -514,14 +514,14 @@ function LetterCard({ show, onClose }) {
           zIndex: 1,
         }}
       >
-        Dear Tanu ✨
+        ❤️✨ Dear Neha ❤️✨
       </motion.h3>
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         {[
-          { text: "On this special day, I hope you’re doing well and growing beautifully in your life. I want you to know how genuinely grateful I am for the part you’ve played in my journey. Whenever I felt alone or went through difficult phases, you were there sometimes with advice, sometimes with scolding, sometimes just with your presence but always in a way that helped me stand up again.", delay: 0.4 },
-          { text: "I still remember the first time you said your iconic dialogue, “Kisi ke kehne se nahi karti hu, jab mann karega tab karungi”😂. We laughed so much over that line. There is a time when I used to wait every day for your text, after that once you teased me and calling me your “Sakhi”🤭 These moments are pure gem and wonderful gift to me", delay: 0.55 },
-          { text: "Happy Birthday, Madam! and  a life filled with peace, growth, success, and the kind of happiness that truly stays. No matter where life takes us, I will always respect your journey and be happy for you.", delay: 0.7 },
+          { text: "Aaj ka din mere liye bahut special hai, kyunki aaj meri life ki sabse beautiful person ka birthday hai. Neha, tum sirf meri girlfriend nahi ho, tum meri happiness, meri peace aur meri life ka sabse important part ho. Jab se tum meri life mein aayi ho, tab se har din aur bhi beautiful lagne laga hai. Tumhari smile meri favorite cheez hai, aur tumhari ek choti si baat bhi mera pura mood better kar deti hai.", delay: 0.4 },
+          { text: "Tumne mujhe sirf pyaar nahi diya, balki har situation mein samjha aur support bhi kiya hai. Tumhare saath bitaya hua har moment mere liye priceless hai. Chahe hum hasi mazaak karein, late night talks ho, ya simple moments… sab mere heart ke bahut close hain. Main shayad har baar perfectly express nahi kar pata, lekin sach ye hai ki main tumse bahut zyada pyaar karta hoon aur tum meri life ki sabse beautiful feeling ho 👑💖", delay: 0.55 },
+          { text: "Aaj tumhare birthday par main bas itna kehna chahta hoon ki tum hamesha khush raho, smile karti raho, aur tumhari life mein kabhi kisi cheez ki kami na ho. Tumhare saare dreams complete ho aur tumhe duniya ki har happiness mile, because you truly deserve it. Thank you Neha, meri life ko itna special banane ke liye. Happy Birthday meri princess 👑💖", delay: 0.7 },
         ].map((item, i) => (
           <motion.p
             key={i}
@@ -557,7 +557,7 @@ function LetterCard({ show, onClose }) {
             textShadow: '0 0 15px rgba(200,162,200,0.5)',
           }}
         >
-          🎂🎉Happy Birthday Tanu✨😊
+          🎂🎉I love you forever and always ❤️✨😊
         </motion.p>
       </div>
 

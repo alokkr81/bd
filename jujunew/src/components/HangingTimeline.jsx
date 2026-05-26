@@ -108,17 +108,16 @@ const keyframes = `
 `
 
 const photos = [
-    { img: "17.jpeg", rotate: -3, caption: "✨Sangam 01/03/25✨" },
-    { img: "3.jpeg", rotate: 4, caption: "✨10/07/20✨" },
-    { img: "8.jpeg", rotate: -2, caption: "✨MahaKaleshwar✨ ✨09/04/24✨" },
-    { img: "25.jpeg", rotate: 5, caption: "✨Teacher's Day✨ ✨05/09/18✨" },
-    { img: "12.jpeg", rotate: -4, caption: "✨12/02/22✨" },
+    { img: "17.jpeg", rotate: -3, caption: "✨chhath puja✨ 12/11/23✨" },
+    { img: "3.jpeg", rotate: 4, caption: "✨28/02/20✨" },
+    { img: "8.jpeg", rotate: -2, caption: "✨morning✨ ✨20/04/20✨" },
+    { img: "25.jpeg", rotate: 5, caption: "✨movies time✨ ✨05/09/23✨" },
+    { img: "12.jpeg", rotate: -4, caption: "✨12/02/21✨" },
     { img: "16.jpeg", rotate: 2, caption: "✨JK Temple✨ ✨26/12/24✨" },
-    { img: "22.jpeg", rotate: -5, caption: "✨31/03/25✨" },
-    { img: "10.jpeg", rotate: 4, caption: "✨MahaKaleshwar✨ ✨09/04/24✨" },
-    { img: "20.jpeg", rotate: -3, caption: "✨27/04/22✨" },
-    { img: "4.jpeg", rotate: 4, caption: "😂A A N C H A L 😂 ✨19/01/20✨" },
-    { img: "6.jpeg", rotate: -3, caption: "✨Rakshabandhan✨ ✨22/08/21✨" }
+    { img: "10.jpeg", rotate: 4, caption: "✨ iskon temple✨ ✨29/05/23✨" },
+    { img: "20.jpeg", rotate: -3, caption: "✨For me✨✨ 8/02/23 ✨" },
+    { img: "4.jpeg", rotate: 4, caption: "😂 first saraswati puja😂 ✨19/01/20✨" },
+    { img: "6.jpeg", rotate: -3, caption: "✨ first chhath puja✨ ✨31/10/19✨" }
 ]
 
 export default function HangingTimeline() {
