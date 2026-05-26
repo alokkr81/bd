@@ -677,16 +677,29 @@ function TouchMeCTA() {
               <div className="te-glass-card">
                 <h3 className="te-card-title">From Diary 💖</h3>
                 <p className="te-card-text">
-                  “Ek arzoo hai ki us neha ki sab arzoo puri ho,
-                  <br />Jis arzoo ko hasil karne mein usne sab arzooein pichhe chhodi ho.”
-                  <br /> "Mujhe mujhse behtar jaanti hai wo
-                  <br /> Sabme se behtar pehchanti hai wo
-                  <br /> Tabhi jaate waqt dubara palat kr nhi dekha
-                  <br /> Ek mai hu jo uski milne ki aas mai baitha hua hu
-                  <br /> Shayad y bhi jaanti hai wo"
-                  <br />  🤭🤭🤭🤭🤭🤭🤭🤭🤭🤭🤭🤭🤭🤭🤭
-                  <br /> Something between us needs attention… before it turns into complete silence.
-                  <br />Happy Birthday, Madam. 💕
+                  “Ek baat aaj bhi adhuri si lagti hai,
+                  <br />Jaise hum dono ke beech kuch abhi bhi baaki ho.
+                  <br />Na gussa poora khatam hua,
+                  <br />Na mohabbat kabhi kam hui…” ❤️
+                  <br />Wo kehte hain na,
+                  <br />Kuch log door hokar bhi dil ke sabse kareeb hote hain…
+                  <br />Bas tum bhi unhi mein se ek ho, Neha.
+                  <br />Tumhari yaadein aaj bhi bina permission ke smile de jaati hain,
+                  <br />Aur kabhi kabhi aankhein bhi…” 🥺
+                  <br />
+                  <br />“Main aaj bhi wahi hoon,
+                  <br />Jo tumhari ek ‘hey’ se pura din happy kar leta tha.
+                  <br />Shayad waqt badal gaya, situations badal gayi,
+                  <br />Par dil ka connection abhi bhi wahi hai…” ✨
+                  <br />
+                  <br />“Birthday tumhara hai,
+                  <br />Par dua meri hai —
+                  <br />Ki tum hamesha khush raho, smile karti raho,
+                  <br />Aur life tumhe har wo cheez de jo tum deserve karti ho.” 💖
+                  <br />
+                  <br />Happy Birthday, Madam 🌸
+                  <br />Kabhi kabhi kuch rishton ko naam ki nahi,
+                  <br />Bas ek dusre ki zarurat hoti hai… ❤️
                 </p>
                 <div className="te-card-btns">
                   <button className="te-card-btn te-card-btn--celebrate" onClick={handleCelebrate}>

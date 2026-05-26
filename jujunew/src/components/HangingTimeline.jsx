@@ -113,11 +113,11 @@ const photos = [
     { img: "8.jpeg", rotate: -2, caption: "✨morning✨ ✨20/04/20✨" },
     { img: "25.jpeg", rotate: 5, caption: "✨movies time✨ ✨05/09/23✨" },
     { img: "12.jpeg", rotate: -4, caption: "✨12/02/21✨" },
-    { img: "16.jpeg", rotate: 2, caption: "✨JK Temple✨ ✨26/12/24✨" },
+    { img: "16.jpeg", rotate: 2, caption: "✨ iskon Temple✨ ✨29/05/23✨" },
     { img: "10.jpeg", rotate: 4, caption: "✨ iskon temple✨ ✨29/05/23✨" },
     { img: "20.jpeg", rotate: -3, caption: "✨For me✨✨ 8/02/23 ✨" },
     { img: "4.jpeg", rotate: 4, caption: "😂 first saraswati puja😂 ✨19/01/20✨" },
-    { img: "6.jpeg", rotate: -3, caption: "✨ first chhath puja✨ ✨31/10/19✨" }
+    { img: "6.jpeg", rotate: -3, caption: "✨so cute ✨ ✨29/11/23✨" }
 ]
 
 export default function HangingTimeline() {
