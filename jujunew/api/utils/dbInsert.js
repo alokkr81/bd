@@ -11,6 +11,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 
+// Module-level singleton — reset to null on each cold start.
+// NOT cached across requests to avoid stale clients after env changes.
 let supabase = null;
 
 /**
@@ -19,12 +21,26 @@ let supabase = null;
  * @returns {import('@supabase/supabase-js').SupabaseClient | null}
  */
 export function getSupabase() {
-  if (!supabase && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    });
-    console.log('[DB] Supabase client initialized');
+  if (supabase) return supabase;
+
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !key) {
+    console.error('[DB] ❌ SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing from environment.');
+    return null;
   }
+
+  // Guard against the placeholder URL that was previously in .env
+  if (url.includes('mock.supabase.co') || url === 'https://mock.supabase.co') {
+    console.error('[DB] ❌ SUPABASE_URL is still set to the mock placeholder. Update .env with the real project URL.');
+    return null;
+  }
+
+  supabase = createClient(url, key, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  console.log('[DB] ✅ Supabase client initialized →', url);
   return supabase;
 }
 

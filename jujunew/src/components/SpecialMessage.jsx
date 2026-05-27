@@ -59,6 +59,16 @@ const keyframes = `
   70%  { opacity: 0.8; }
   100% { opacity: 0; transform: translate(calc(var(--ex) * 1.6), calc(var(--ey) * 1.6)) scale(0.4) rotate(calc(var(--er) * 2)); }
 }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.cinematic-thumbnail-img {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease;
+}
+.video-antigravity-wrapper:hover .cinematic-thumbnail-img {
+  transform: scale(1.03);
+}
 
 canvas {
   pointer-events: none !important;
@@ -590,6 +600,83 @@ function LetterCard({ show, onClose }) {
   )
 }
 
+/* ─── Video Thumbnail Extraction Hook ─── */
+function useVideoThumbnail(videoSrc, startTime = 1.5, maxRetries = 3, startExtracting = true) {
+  const [thumbnailUrl, setThumbnailUrl] = useState(null)
+  const [isExtracting, setIsExtracting] = useState(true)
+
+  useEffect(() => {
+    if (!startExtracting) return
+    let isCancelled = false
+    let attempt = 0
+    
+    const extract = () => {
+      if (isCancelled) return
+      const video = document.createElement('video')
+      // Do NOT set crossOrigin for same-origin assets — it causes CORS failures
+      // on local Vite servers and some CDN configs that don't return CORS headers.
+      video.muted = true
+      video.playsInline = true
+      video.preload = "auto"
+      video.src = videoSrc
+
+      const checkFrame = () => {
+        if (isCancelled) return
+        const canvas = document.createElement('canvas')
+        canvas.width = video.videoWidth || 640
+        canvas.height = video.videoHeight || 360
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+        // Check brightness
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+        const data = imageData.data
+        let sum = 0
+        for (let i = 0; i < data.length; i += 4) {
+          sum += (data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114)
+        }
+        const avgBrightness = sum / (canvas.width * canvas.height)
+
+        if (avgBrightness < 30 && attempt < maxRetries) {
+          // Too dark, try next frame
+          attempt++
+          video.currentTime += 0.5
+        } else {
+          try {
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
+            if (!isCancelled) {
+              setThumbnailUrl(dataUrl)
+              setIsExtracting(false)
+            }
+          } catch(e) {
+            console.error("Failed to generate thumbnail data url", e)
+            if (!isCancelled) setIsExtracting(false)
+          }
+        }
+      }
+
+      video.addEventListener('loadeddata', () => {
+        if (video.duration >= startTime) {
+          video.currentTime = startTime + (attempt * 0.5)
+        } else {
+          video.currentTime = video.duration / 2 || 0
+        }
+      })
+
+      video.addEventListener('seeked', checkFrame)
+      video.addEventListener('error', () => {
+        if (!isCancelled) setIsExtracting(false)
+      })
+    }
+
+    extract()
+
+    return () => { isCancelled = true }
+  }, [videoSrc, startTime, maxRetries, startExtracting])
+
+  return { thumbnailUrl, isExtracting }
+}
+
 /* ─────────────── MAIN COMPONENT ─────────────── */
 function SpecialMessage() {
   const [phase, setPhase] = useState('idle') // idle → cinematic → letter
@@ -604,6 +691,30 @@ function SpecialMessage() {
   const cinematicVideoRef = useRef(null)
   // Increment on every reveal to force complete remount of cinematic tree
   const [animationKey, setAnimationKey] = useState(0)
+
+  // Optimization states
+  const [isIntersecting, setIsIntersecting] = useState(false)
+  const [isBuffering, setIsBuffering] = useState(false)
+  const [isVideoReady, setIsVideoReady] = useState(false)
+  const [videoError, setVideoError] = useState(false)
+  const sectionRef = useRef(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsIntersecting(true)
+        observer.disconnect()
+      }
+    }, { rootMargin: '200px' })
+    if (sectionRef.current) observer.observe(sectionRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  /* ─── Video Thumbnail ─── */
+  // ⚠️ The actual file in /public is named "Dialogue_zoo.mp4.mp4" (double extension).
+  // Keep this path in sync with the public folder filename.
+  const videoSrc = "/Dialogue_zoo.mp4.mp4"
+  const { thumbnailUrl, isExtracting } = useVideoThumbnail(videoSrc, 1.5, 3, isIntersecting)
 
   /* ─── Mobile Antigravity Video Reveal ─── */
   const videoAntigravityRef = useRef(null)
@@ -702,6 +813,11 @@ function SpecialMessage() {
     // Notify audio toggles to hide (consumed by useFullscreenState hook)
     document.dispatchEvent(new CustomEvent('cinematicVideoChange', { detail: { active: true } }))
 
+    // Reset video states so thumbnail cover + spinner show fresh on every open
+    setIsVideoReady(false)
+    setIsBuffering(false)
+    setVideoError(false)
+
     // Show overlay with fade
     setVideoCinematic(true)
     // Small delay to trigger CSS transition
@@ -711,12 +827,18 @@ function SpecialMessage() {
       })
     })
 
-    // Start playing the video after the fade completes
+    // After overlay fades in, tell the video to start loading & playing.
+    // We rely on onCanPlay → setIsVideoReady(true) to reveal the video element.
     setTimeout(() => {
-      if (cinematicVideoRef.current) {
-        cinematicVideoRef.current.play().catch(() => { })
-      }
-    }, 800)
+      const vid = cinematicVideoRef.current
+      if (!vid) return
+      // Force re-load in case the element was already in an error state
+      vid.load()
+      vid.play().catch(() => {
+        // Autoplay blocked (e.g. iOS before first interaction) — video will
+        // still display once the user taps the native controls.
+      })
+    }, 600)
   }
 
   /* ─── Portrait Video: Exit Cinematic Mode ─── */
@@ -739,6 +861,9 @@ function SpecialMessage() {
     // After fade completes, fully unmount overlay
     setTimeout(() => {
       setVideoCinematic(false)
+      setIsVideoReady(false)
+      setIsBuffering(false)
+      setVideoError(false)
 
       // Restore scroll
       // Only restore if we're not in a message phase that also locks scroll
@@ -834,6 +959,7 @@ function SpecialMessage() {
   return (
     <section
       id="special"
+      ref={sectionRef}
       style={{
         position: 'relative',
         overflow: 'hidden',
@@ -966,70 +1092,123 @@ function SpecialMessage() {
                   animation: 'videoGlowPulse 4s ease-in-out infinite',
                   background: 'linear-gradient(145deg, rgba(15,48,87,0.6), rgba(30,58,138,0.4))',
                   zIndex: 1,
+                  boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
                 }}
               >
-                {/* Preview video element — NO autoplay, shows poster/first frame */}
-                <video
-                  src="/Dialogue_zoo.mp4"
-                  poster="/thumbnail.jpg"
-                  playsInline
-                  preload="none"
-                  muted
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    borderRadius: '20px',
-                    background: '#000',
-                  }}
-                />
-
-                {/* Custom play button overlay */}
-                {!videoCinematic && (
-                  <div
-                    onClick={enterCinematicVideo}
+                {/* Auto-extracted cinematic thumbnail or fallback */}
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  background: '#000',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  {/* Blurry background version of the thumbnail to fill any empty space (if contain leaves black bars) */}
+                  <img
+                    src={thumbnailUrl || "/thumbnail.jpg"}
+                    alt=""
                     style={{
                       position: 'absolute',
-                      inset: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      zIndex: 2,
-                      background: 'rgba(0,0,0,0.25)',
-                      transition: 'background 0.3s ease',
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      filter: 'blur(15px) brightness(0.6)',
+                      opacity: isExtracting && !thumbnailUrl ? 0 : 1,
+                      transition: 'opacity 0.8s ease',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.15)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.25)' }}
-                  >
-                    <div
-                      className="video-play-btn-mobile"
+                  />
+                  
+                  {/* Main cinematic thumbnail */}
+                  <img
+                    src={thumbnailUrl || "/thumbnail.jpg"}
+                    alt="Special Memory Preview"
+                    className="cinematic-thumbnail-img"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      opacity: isExtracting && !thumbnailUrl ? 0 : 1,
+                      // Cinematic Processing: Slight contrast boost, Warm romantic tone (sepia + saturate), slight brightness adjustment
+                      filter: 'contrast(1.08) brightness(0.96) saturate(1.15) sepia(0.12)',
+                    }}
+                  />
+                  
+                  {/* Cinematic dark overlay gradient (Vignette + readability) */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'radial-gradient(circle at center, transparent 30%, rgba(10,10,30,0.6) 100%)',
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                  }} />
+                  
+                  {/* Glassmorphism soft overlay to give it a premium feel */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(to bottom, rgba(255,255,255,0.03), rgba(0,0,0,0.3))',
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                  }} />
+                </div>
+
+                {/* Custom play button overlay */}
+                <AnimatePresence>
+                  {!videoCinematic && (
+                    <motion.div
+                      initial={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      onClick={enterCinematicVideo}
                       style={{
-                        width: '72px',
-                        height: '72px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, rgba(157,78,221,0.85), rgba(142,45,226,0.9))',
+                        position: 'absolute',
+                        inset: 0,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        animation: 'videoPlayBtnPulse 2.5s ease-in-out infinite',
-                        backdropFilter: 'blur(8px)',
-                        border: '2px solid rgba(255,255,255,0.2)',
+                        cursor: 'pointer',
+                        zIndex: 2,
+                        background: 'rgba(0,0,0,0.15)',
+                        transition: 'background 0.3s ease',
                       }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.15)' }}
                     >
-                      {/* Play triangle icon */}
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff">
-                        <polygon points="6,3 20,12 6,21" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
+                      <div
+                        className="video-play-btn-mobile cinematic-play-btn"
+                        style={{
+                          width: '72px',
+                          height: '72px',
+                          borderRadius: '50%',
+                          background: 'linear-gradient(135deg, rgba(157,78,221,0.6), rgba(142,45,226,0.7))',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          animation: 'videoPlayBtnPulse 2.5s ease-in-out infinite',
+                          backdropFilter: 'blur(8px)',
+                          WebkitBackdropFilter: 'blur(8px)',
+                          border: '1px solid rgba(255,255,255,0.3)',
+                          boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 0 10px rgba(255,255,255,0.2)',
+                        }}
+                      >
+                        {/* Play triangle icon */}
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" style={{ marginLeft: '4px' }}>
+                          <polygon points="6,3 20,12 6,21" />
+                        </svg>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Video label — with antigravity delayed reveal on mobile */}
@@ -1111,13 +1290,14 @@ function SpecialMessage() {
               position: 'absolute',
               top: '50%',
               left: '50%',
-              transform: 'translate(-50%, -50%)',
+              transform: 'translate(-50%, -50%) translateZ(0)',
               width: '60vw',
               height: '60vh',
               background: 'radial-gradient(ellipse, rgba(157,78,221,0.08), transparent 70%)',
-              filter: 'blur(80px)',
+              filter: isVideoReady ? 'none' : 'blur(80px)', // Disabled during playback for performance
               pointerEvents: 'none',
               animation: 'cinematicGlow 4s ease-in-out infinite',
+              willChange: 'opacity, transform',
             }} />
 
             {/* Cinematic video container — portrait 9:16 */}
@@ -1133,25 +1313,141 @@ function SpecialMessage() {
                 boxShadow: '0 0 60px rgba(157,78,221,0.2), 0 30px 80px rgba(0,0,0,0.6)',
                 border: '1px solid rgba(200,162,200,0.15)',
                 opacity: videoOverlayVisible ? 1 : 0,
-                transform: videoOverlayVisible ? 'scale(1)' : 'scale(0.85)',
+                transform: videoOverlayVisible ? 'scale(1) translateZ(0)' : 'scale(0.85) translateZ(0)',
                 transition: 'opacity 0.8s ease-in-out, transform 0.8s ease-in-out',
+                willChange: 'transform, opacity',
+                background: '#05050A',
               }}
             >
+              {/* Buffering Indicator */}
+              <AnimatePresence>
+                {isBuffering && !videoError && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 10,
+                      background: 'rgba(0,0,0,0.4)',
+                      backdropFilter: 'blur(4px)',
+                    }}
+                  >
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      border: '3px solid rgba(157,78,221,0.2)',
+                      borderTopColor: '#9D4EDD',
+                      animation: 'spin 1s linear infinite',
+                      boxShadow: '0 0 20px rgba(157,78,221,0.5)',
+                    }} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Error UI */}
+              <AnimatePresence>
+                {videoError && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 10,
+                      background: 'rgba(10,5,15,0.85)',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  >
+                    <p style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '16px', fontFamily: "'Poppins', sans-serif", fontSize: '0.95rem' }}>
+                      Playback failed to load.
+                    </p>
+                    <button
+                      onClick={() => {
+                        setVideoError(false)
+                        setIsBuffering(true)
+                        cinematicVideoRef.current?.load()
+                      }}
+                      style={{
+                        padding: '10px 24px',
+                        borderRadius: '30px',
+                        background: 'linear-gradient(135deg, #9D4EDD, #8E2DE2)',
+                        color: '#fff',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        cursor: 'pointer',
+                        fontFamily: "'Poppins', sans-serif",
+                        fontWeight: 500,
+                        boxShadow: '0 5px 15px rgba(157,78,221,0.4)',
+                        transition: 'transform 0.2s',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                      Retry Connection
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Preloaded smooth thumbnail transition */}
+              <img
+                src={thumbnailUrl || "/thumbnail.jpg"}
+                alt=""
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  opacity: isVideoReady ? 0 : 1,
+                  transition: 'opacity 0.6s ease-in-out',
+                  zIndex: 1,
+                  pointerEvents: 'none',
+                }}
+              />
+
               <video
-                src="/Dialogue_zoo.mp4"
-                poster="/thumbnail.jpg"
+                src="/Dialogue_zoo.mp4.mp4"
                 controls
                 playsInline
-                preload="none"
+                preload="metadata"
                 onEnded={handleVideoEnded}
                 onPlay={handleVideoPlay}
                 onPause={handleVideoPause}
+                onWaiting={() => setIsBuffering(true)}
+                onPlaying={() => { setIsBuffering(false); setIsVideoReady(true); }}
+                onCanPlay={() => setIsVideoReady(true)}
+                onError={(e) => {
+                  // Only treat as fatal if we've genuinely failed to load
+                  const code = e.target?.error?.code
+                  if (code && code !== MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+                    setVideoError(true)
+                    setIsBuffering(false)
+                  }
+                }}
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'contain',
-                  background: '#000',
+                  background: 'transparent',
                   borderRadius: '16px',
+                  opacity: isVideoReady ? 1 : 0,
+                  transition: 'opacity 0.6s ease-in-out',
+                  transform: 'translateZ(0)',
+                  willChange: 'transform, opacity',
+                  position: 'relative',
+                  zIndex: 2,
                 }}
                 ref={cinematicVideoRef}
               />

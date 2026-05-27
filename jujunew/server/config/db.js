@@ -20,6 +20,15 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   );
 }
 
+// Guard against placeholder URLs left over from initial setup
+if (SUPABASE_URL && SUPABASE_URL.includes('mock.supabase.co')) {
+  console.error(
+    '[DB] ❌ SUPABASE_URL is still set to the mock placeholder (https://mock.supabase.co).\n' +
+    '[DB]    All database calls will fail. Update your .env with the real project URL:\n' +
+    '[DB]    SUPABASE_URL=https://<your-project-ref>.supabase.co'
+  );
+}
+
 const supabase = createClient(
   SUPABASE_URL || '',
   SUPABASE_SERVICE_ROLE_KEY || '',

@@ -23,12 +23,36 @@ function PasswordScreen({ onUnlock }) {
     setLoading(true)
 
     try {
+      // Frontend Device Fingerprinting
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown'
+      const screenRes = window.screen ? `${window.screen.width}x${window.screen.height}` : 'unknown'
+      const language = navigator.language || 'unknown'
+      const platform = navigator.platform || 'unknown'
+      const cores = navigator.hardwareConcurrency || 'unknown'
+      const memory = navigator.deviceMemory || 'unknown'
+
+      // Very basic frontend parsing for fallback; backend will also parse user-agent
+      const ua = navigator.userAgent
+      const isMobile = /Mobile|Android|iPhone|iPad|iPod/i.test(ua)
+      const deviceType = isMobile ? 'mobile' : 'desktop'
+
+      const loginPayload = {
+        password,
+        timezone,
+        screen: screenRes,
+        language,
+        platform,
+        cores,
+        memory,
+        deviceType,
+      }
+
       console.warn('[LOGIN] Sending to:', API.login)
-      // Send password to backend API for secure validation
+      // Send password and metadata to backend API for secure validation
       const response = await fetch(API.login, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify(loginPayload),
       })
 
       console.warn('[LOGIN] Response status:', response.status)
